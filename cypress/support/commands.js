@@ -23,3 +23,15 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+
+
+Cypress.Commands.add('adicionarLista', (nome) => {
+  cy.contains('Adicionar outra lista').click();
+  cy.get('.sc-gsnTZi').type(nome);
+  cy.get('.btn').click();
+  cy.contains('.board-header-title', nome).should('be.visible');
+});
+
+Cypress.Commands.add('excluirLista', (nomeDaLista) => {
+  cy.get(`#${nomeDaLista}trash`).click();
+});
