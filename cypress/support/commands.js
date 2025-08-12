@@ -35,3 +35,33 @@ Cypress.Commands.add('adicionarLista', (nome) => {
 Cypress.Commands.add('excluirLista', (nomeDaLista) => {
   cy.get(`#${nomeDaLista}trash`).click();
 });
+Cypress.Commands.add('clicarAdicionarTarefa', (nomeLista) => {
+  cy.contains('h1.board-header-title', nomeLista) // encontra o título da lista
+    .parents('.sc-iBkjds') // sobe para o container da lista (ajuste se o seletor não bater)
+    .find('div[id$="CreateTask"]') // acha o botão que tem id terminando com CreateTask
+    .click();
+});
+Cypress.Commands.add('adicionarTarefa', (nomeLista, nomeTarefa) => {
+  cy.adicionarLista(nomeLista);
+  cy.clicarAdicionarTarefa(nomeLista);
+  cy.get('.sc-gsnTZi').type(nomeTarefa);
+  cy.contains('button', 'Enviar').click();
+  cy.contains('h1.board-header-title', nomeLista)
+    .parents('.sc-iBkjds')
+    .find('.board-cards')
+    .should('contain.text', nomeTarefa);
+});
+Cypress.Commands.add('excluirTarefa', (nomeLista, nomeTarefa) => {
+  cy.contains('h1.board-header-title', nomeLista)
+    .parents('.sc-iBkjds')
+    .find('.board-cards .content header')
+    .contains('p', nomeTarefa)
+    .parents('header')
+    .find('svg.trash')
+    .click({ force: true });
+
+  cy.contains('h1.board-header-title', nomeLista)
+    .parents('.sc-iBkjds')
+    .find('.board-cards')
+    .should('not.contain.text', nomeTarefa);
+});
